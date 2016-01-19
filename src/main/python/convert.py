@@ -4,13 +4,15 @@ import os
 import sys
 from subprocess import call
 
+conversion_xslt = "conversion.xslt"
 
 def main(argv):
     classpath = os.getenv('CLASSPATH', 'lib/saxon.9.1.0.8.jar')
-    conversion_xslt = "conversion.xslt"
     make_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/frbrizer/xsl/make.xslt"
-    rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/norbok/rules/norbok.rules.xml"
-    input = os.path.join(os.path.expanduser("~"), 'Downloads/dataset_3/')
+    #rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/norbok/rules/norbok.rules.xml"
+    #rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/data/rules/marc21.to.rda.xml"
+    rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/data/rules/bib-r.baseline.rules.xml"
+    input = os.path.join(os.path.expanduser("~"), 'Downloads/dataset_5/')
     output = "output"
     filter = '*marc21.xml'
     clean = False
@@ -71,9 +73,10 @@ def check_classpath(classpath):
 def clean_converted_files(input):
     for path, subdirs, files in os.walk(input):
         for file in files:
-            if 'CONVERTED-' in file or 'conversion.xsl':
+            if 'CONVERTED-' in file:
                 print 'removing file ', file
                 os.remove(os.path.join(path, file))
+    os.remove(conversion_xslt)
     sys.exit(0)
 
 
