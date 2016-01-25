@@ -11,6 +11,7 @@ def main(argv):
     make_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/frbrizer/xsl/make.xslt"
     #rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/norbok/rules/norbok.rules.xml"
     #rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/data/rules/marc21.to.rda.xml"
+    #rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/data/rules/bib-r.enhanced.rules.xml"
     rules_xslt = "http://dijon.idi.ntnu.no/exist/rest/db/data/rules/bib-r.baseline.rules.xml"
     input = os.path.join(os.path.expanduser("~"), 'Downloads/dataset_5/')
     output = "output"
@@ -54,14 +55,21 @@ def main(argv):
         for path, subdirs, files in os.walk(input):
             for file in files:
                 abs_path = os.path.join(path, file)
-                if fnmatch.fnmatch(file, filter) and 'CONVERTED-' not in file:
-                    output_file = os.path.join(path, 'CONVERTED-' + file)
-                    print 'converting ', abs_path, " => ", output_file
+                convert_file(abs_path, classpath, file, filter, path)
+    else:
+        convert_file(input, classpath, os.path.basename(input), filter, os.path.dirname(input))
 
-                    call(["java", "-cp", classpath, "net.sf.saxon.Transform"
-                             , "-s:" + abs_path
-                             , "-xsl:" + conversion_xslt
-                             , "-o:" + output_file])
+def convert_file(abs_path, classpath, file, filter, path):
+    print "converting a single file"
+    if fnmatch.fnmatch(file, filter) and 'CONVERTED-' not in file:
+        output_file = os.path.join(path, 'CONVERTED-' + file)
+        print 'converting ', abs_path, " => ", output_file
+
+        call(["java", "-cp", classpath, "net.sf.saxon.Transform"
+                 , "-s:" + abs_path
+                 , "-xsl:" + conversion_xslt
+                 , "-o:" + output_file])
+
 
 
 def check_classpath(classpath):
